@@ -12,7 +12,7 @@ const db = new sqlite3.Database('./banco.db', (err) => {
 
 const createTable = () => {
     console.log("Criando table produtos");
-    db.run("CREATE TABLE IF NOT EXISTS produtos(id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, valor NUMBER)", (err)=>{
+    db.run("CREATE TABLE IF NOT EXISTS produtos(id INTEGER PRIMARY KEY AUTOINCREMENT, placa TEXT, valor NUMBER, horaEntrada TEXT, horaSaida TEXT)", (err)=>{
         if(err){
             console.log("Error ao criar tabela",err);
         }else{
