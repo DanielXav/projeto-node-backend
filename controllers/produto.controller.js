@@ -3,7 +3,7 @@ const banco = require('../config/banco');
 module.exports = server => {
     const urlBase = `/produtos`;
 
-    server.post(`${urlBase}/cadastro`, (req, res) => {
+    server.post(`${urlBase}/cadastrar`, (req, res) => {
         console.log("Novo carro sendo cadastrado: ", req.body.placa, req.body.valor, req.body.horaEntrada, req.body.horaSaida);
 
         const sql = `INSERT INTO produtos(placa, valor, horaEntrada, horaSaida) VALUES(?,?,?,?)`;
@@ -22,16 +22,16 @@ module.exports = server => {
 
     server.get(`${urlBase}/listar`, (req, res) => {
 
-        const sql = `SELECT id, nome, valor FROM produtos 
+        const sql = `SELECT id, placa, valor, horaEntrada, horaSaida FROM produtos 
                       ORDER BY id`;
 
         banco.DB.all(sql, [], (err, rows) => {
             if (err) {
-                res.send("Error ao listar todos os produtos");
+                res.send("Error ao listar todos os carros");
                 res.status(500);
                 throw err;
             }
-            console.log("Produtos localizados");
+            console.log("Carros localizados");
             res.status(200);
             res.send(rows);
         });
