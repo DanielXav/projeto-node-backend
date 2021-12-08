@@ -39,16 +39,16 @@ module.exports = server => {
 
     server.get(`${urlBase}/listar/:id`, (req, res) => {
 
-        const sql = `SELECT nome, valor FROM produtos 
+        const sql = `SELECT placa, valor, horaEntrada, horaSaida FROM produtos 
                      WHERE id = ?`;
 
         banco.DB.each(sql, [req.params.id], (err, row) => {
             if (err) {
-                res.send("Error ao listar o produto");
+                res.send("Error ao listar o carro");
                 res.status(500);
                 throw err;
             }
-            console.log("Produto localizado");
+            console.log("Carro localizado");
             res.status(200);
             res.send(row);
         });
