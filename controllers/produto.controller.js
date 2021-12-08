@@ -3,12 +3,12 @@ const banco = require('../config/banco');
 module.exports = server => {
     const urlBase = `/produtos`;
 
-    server.post(`${urlBase}/cadastrar`, (req, res) => {
-        console.log("Novo produto sendo inserido: ", req.body.nome, req.body.valor);
+    server.post(`${urlBase}/cadastro`, (req, res) => {
+        console.log("Novo carro sendo cadastrado: ", req.body.placa, req.body.valor, req.body.horaEntrada, req.body.horaSaida);
 
-        const sql = `INSERT INTO produtos(nome, valor) VALUES(?,?)`;
+        const sql = `INSERT INTO produtos(placa, valor, horaEntrada, horaSaida) VALUES(?,?,?,?)`;
 
-        banco.DB.run(sql, [req.body.nome, req.body.valor], (err) => {
+        banco.DB.run(sql, [req.body.placa, req.body.valor, req.body.horaEntrada, req.body.horaSaida], (err) => {
             if (err) {
                 console.log(err.message);
                 res.send("Error ao inserir registro");
@@ -16,7 +16,7 @@ module.exports = server => {
             }
             console.log("Novo produto adicionado");
             res.status(201);
-            res.send("Novo produto adicionado com sucesso: " + req.body.nome);
+            res.send("Novo carro cadastrado com sucesso: " + req.body.placa);
         });
     });
 
