@@ -54,13 +54,30 @@ module.exports = server => {
         });
     });
 
+    server.get(`${urlBase}/listar/placa`, (req, res) => {
+
+        const sql =  `SELECT id, valor, horaEntrada, horaSaida FROM produtos 
+        WHERE placa = ?`;
+
+        banco.DB.each(sql, [req.params.placa], (err, row) => {
+            if (err) {
+                res.send("Error ao listar o carro");
+                res.status(500);
+                throw err;
+            }
+            console.log("Carro localizado");
+            res.status(200);
+            res.send(row);
+        });
+    })
+
     server.put(`${urlBase}/atualizar`, (req, res) => {
 
         const sql = `UPDATE produtos
-                     SET nome = ?, valor = ?
+                     SET placa = ?, valor = ?
                      WHERE id = ?`;
 
-        banco.DB.run(sql, [req.body.nome, req.body.valor, req.body.id], function (err) {
+        banco.DB.run(sql, [req.body.placa, req.body.valor, req.body.id], function (err) {
             if (err) {
                 res.send("Error ao atualizar o produto");
                 res.status(500);
@@ -71,8 +88,6 @@ module.exports = server => {
             res.send(`Produto atualizado`);
         });
     });
-
-
     
     server.delete(`${urlBase}/remover/:id`, (req, res) => {
 
