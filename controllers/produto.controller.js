@@ -54,10 +54,10 @@ module.exports = server => {
         });
     });
 
-    server.get(`${urlBase}/listar/placa`, (req, res) => {
+    server.get(`${urlBase}/listar/:placa`, (req, res) => {
 
         const sql =  `SELECT id, valor, horaEntrada, horaSaida FROM produtos 
-        WHERE placa = ?`;
+                    WHERE placa = ?`;
 
         banco.DB.each(sql, [req.params.placa], (err, row) => {
             if (err) {
@@ -71,13 +71,13 @@ module.exports = server => {
         });
     })
 
-    server.put(`${urlBase}/atualizar`, (req, res) => {
+    server.put(`${urlBase}/atualizar/:id`, (req, res) => {
 
         const sql = `UPDATE produtos
-                     SET placa = ?, valor = ?
+                     SET placa = ?, valor = ?, horaEntrada = ?, horaSaida = ?
                      WHERE id = ?`;
 
-        banco.DB.run(sql, [req.body.placa, req.body.valor, req.body.id], function (err) {
+        banco.DB.run(sql, [req.body.placa, req.body.valor, req.body.horaEntrada, req.body.horaSaida, req.body.id], function (err) {
             if (err) {
                 res.send("Error ao atualizar o produto");
                 res.status(500);
@@ -91,8 +91,10 @@ module.exports = server => {
     
     server.delete(`${urlBase}/remover/:id`, (req, res) => {
 
-        const sql = `DELETE FROM produtos
-                        WHERE id = ?`;
+        const sql = `DELETE FROM
+        produtos
+        WHERE
+        id = ?`;
 
         banco.DB.run(sql, [req.params.id], function (err) {
             if (err) {
