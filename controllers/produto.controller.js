@@ -93,23 +93,33 @@ module.exports = server => {
     })
 
     // Atualizar por id
-    server.post(`${urlBase}/atualizar/:id`, (req, res) => {
-
-        const sql = `UPDATE produtos
-                     SET placa = ?, valor = ?, horaEntrada = ?, horaSaida = ?
-                     WHERE id = ?`;
-
-        banco.DB.run(sql, [req.body.placa, req.body.valor, req.body.horaEntrada, req.body.horaSaida, req.body.id], function (err) {
-            if (err) {
-                res.send("Error ao atualizar o produto");
-                res.status(500);
-                console.error(err.message);
-            }
-            console.log(`Produto atualizado: ${this.changes}`);
-            res.status(202);
-            res.send(`Produto atualizado`);
+    server.patch(`${urlBase}/atualizar/:id`, (req, res, next) => {
+        var data = {
+            placa: req.body.placa,
+            valor: req.body.valor,
+            horaEntrada: req.body.horaEntrada,
+            horaSaida: req.body.horaSaida
+        }
+        banco.DB.run(
+            `UPDATE produtos set 
+               placa = COALESCE(?,placa), 
+               valor = COALESCE(?,valor), 
+               horaEntrada = COALESCE(?,horaEntrada),
+               horaSaida = COALESCE(?,horaSaida) 
+               WHERE id = ?`,
+            [data.placa, data.valor, data.horaEntrada, data.horaSaida, req.params.id],
+            function (err, result) {
+                if (err){
+                    res.status(400).json({"error": res.message})
+                    return;
+                }
+                res.json({
+                    message: "Carro atualizado com sucesso",
+                    data: data,
+                    changes: this.changes
+                })
         });
-    });
+    })
     
     // Deletar um carro
     server.delete(`${urlBase}/remover/:id`, (req, res) => {
