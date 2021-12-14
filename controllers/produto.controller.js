@@ -3,6 +3,7 @@ const banco = require('../config/banco');
 module.exports = server => {
     const urlBase = `/produtos`;
 
+    // Cadastrar um novo 
     server.post(`${urlBase}/cadastrar`, (req, res) => {
         console.log("Novo carro sendo cadastrado: ", req.body.placa, req.body.valor, req.body.horaEntrada, req.body.horaSaida);
 
@@ -14,12 +15,13 @@ module.exports = server => {
                 res.send("Error ao inserir registro");
                 res.status(500);
             }
-            console.log("Novo produto adicionado");
+            console.log("Novo carro adicionado");
             res.status(201);
             res.send("Novo carro cadastrado com sucesso: " + req.body.placa);
         });
     });
 
+    // Listar todos os carros do banco
     server.get(`${urlBase}/listar`, (req, res) => {
 
         const sql = `SELECT id, placa, valor, horaEntrada, horaSaida FROM produtos 
@@ -37,6 +39,7 @@ module.exports = server => {
         });
     });
 
+    // Listar pod id
     server.get(`${urlBase}/listar/:id`, (req, res) => {
 
         const sql = `SELECT placa, valor, horaEntrada, horaSaida FROM produtos 
@@ -54,6 +57,7 @@ module.exports = server => {
         });
     });
 
+    // Listar pela placa
     server.get(`${urlBase}/listar/:placa`, (req, res) => {
 
         const sql =  `SELECT id, valor, horaEntrada, horaSaida FROM produtos 
@@ -71,7 +75,25 @@ module.exports = server => {
         });
     })
 
-    server.put(`${urlBase}/atualizar/:id`, (req, res) => {
+    //Mostrar o total recebido
+    server.get(`${urlBase}/total`, (req, res) => {
+
+        const sql =  `SELECT SUM(valor) AS total FROM produtos`;
+
+        banco.DB.all(sql, [req.params.valor], (err, row) => {
+            if (err) {
+                res.send("Error ao mostrar o total recebido");
+                res.status(500);
+                throw err;
+            }
+            console.log("Total recebido: ");
+            res.status(200);
+            res.send(row);
+        });
+    })
+
+    // Atualizar por id
+    server.post(`${urlBase}/atualizar/:id`, (req, res) => {
 
         const sql = `UPDATE produtos
                      SET placa = ?, valor = ?, horaEntrada = ?, horaSaida = ?
@@ -89,6 +111,7 @@ module.exports = server => {
         });
     });
     
+    // Deletar um carro
     server.delete(`${urlBase}/remover/:id`, (req, res) => {
 
         const sql = `DELETE FROM
